@@ -69,6 +69,7 @@
 .md-typeset table:not([class]) td { line-height: 1.75; }
 .md-typeset img { display: block; margin: 1.4rem auto; border-radius: .3rem; }
 .md-typeset .arithmatex { max-width: 100%; }
+.md-typeset .math-display { display: block; overflow-x: auto; overflow-y: hidden; }
 .md-typeset div.arithmatex { overflow-x: auto; overflow-y: hidden; padding: .25em 0; }
 .md-typeset .source-caption { margin-top: 2.5rem; padding-top: .8rem; border-top: 1px solid var(--desk-line); font-size: .65rem; color: var(--desk-muted); display: flex; flex-wrap: wrap; gap: .4rem 1rem; justify-content: space-between; }
 .md-footer { background: var(--desk-surface); color: var(--md-default-fg-color); border-top: 1px solid var(--desk-line); }
@@ -97,6 +98,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--md-accent-fg-co
   .md-main__inner { margin-top: 1rem; }
   .md-content__inner { padding-inline: 0; }
   .md-typeset { font-size: .8rem; }
+  .md-typeset span.arithmatex:not(.math-display) { display: inline-grid; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: baseline; }
   .md-typeset h1 { font-size: 1.55rem; }
   .md-content__inner:has(.book-entry) > h1 { font-size: 2rem; }
   .md-typeset .book-entry { padding: 1.1rem; }

@@ -270,6 +270,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     provenance = DOCS / "sources/index.md"
     provenance.parent.mkdir(parents=True, exist_ok=True)
     source_url = meta["base_url"] + "README.md"
+    notes = f'- [配图生成说明](../{spec["mount"]}/assets/figure_generation_prompts.md)：源书目录中一并保留的素材说明。' if (book / "assets/figure_generation_prompts.md").is_file() else ""
     canonical = provenance.read_text(encoding="utf-8")
     provenance.write_text(canonical + f'''
 
@@ -288,7 +289,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
 
 - [完整原始文件 ZIP](../downloads/kalibr-cam-imu-original.zip)：文件名、目录和每个文件的字节内容均保留，不替换 Markdown 链接。
 - [SHA-256 校验清单](../downloads/kalibr-cam-imu-sha256.json)：列出每个文件的大小与哈希，以及整个 ZIP 的哈希。
-- [配图生成说明](../{spec["mount"]}/assets/figure_generation_prompts.md)：源书目录中一并保留的素材说明。
+{notes}
 
 网页只将 `README.md` 映射为入口，并适配对应的相对链接；不改写章节正文、公式或配图。来源提示位于正文之后，不插入原文。
 ''', encoding="utf-8")

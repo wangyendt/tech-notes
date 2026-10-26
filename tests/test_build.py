@@ -91,6 +91,28 @@ class BuilderTests(unittest.TestCase):
             builder.copy_tree(source, root / "web", meta)
             self.assertTrue((root / "web/assets/notes.md").exists())
 
+    def test_embedded_display_math_is_not_changed_by_markdown(self):
+        import markdown
+        from scripts.math_display import DisplayMathExtension
+        tex = r"\underbrace{a_b}_{label} + \begin{bmatrix}a\\b\end{bmatrix}"
+        for prefix in ["> text\n> ", "1. text\n   "]:
+            original = prefix + "$$\n" + ("> " if prefix.startswith(">") else "   ") + tex + "\n" + ("> " if prefix.startswith(">") else "   ") + "$$"
+            html = markdown.markdown(original, extensions=["pymdownx.arithmatex", DisplayMathExtension()], extension_configs={"pymdownx.arithmatex": {"generic": True}})
+            self.assertIn('class="arithmatex math-display"', html)
+            self.assertIn(tex, html)
+            self.assertNotIn("<em>", html)
+
+    def test_display_fallback_leaves_code_and_regular_math_alone(self):
+        import markdown
+        from scripts.math_display import DisplayMathExtension
+        original = "`$$ code $$`\n\n```text\n$$ not math $$\n```\n\n$$\nx^2\n$$\n\n$a_b$"
+        html = markdown.markdown(original, extensions=["pymdownx.superfences", "pymdownx.arithmatex", DisplayMathExtension()], extension_configs={"pymdownx.arithmatex": {"generic": True}})
+        self.assertNotIn("math-display", html)
+        self.assertIn("$$ code $$", html)
+        self.assertIn("not math", html)
+        self.assertIn(r"\[", html)
+        self.assertIn(r"\(a_b\)", html)
+
     def test_anonymization(self):
         case = ROOT / "content/systems/android-wearable-heart-rate"
         for path in case.rglob("*"):
