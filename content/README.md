@@ -37,7 +37,7 @@ description: 从公式到代码，从现场问题到可验证结论。
 
 ### 标定：按一本书建立完整理解
 
-[**Kalibr Cam-IMU：从公式推导到 Ceres 复现**](calibration/kalibr-cam-imu/index.md)
+[**Kalibr Cam-IMU：从公式推导到 Ceres 复现**](calibration/kalibr-cam-imu/README.md)
 
 从问题、符号和坐标系出发，进入最小二乘、相机与 IMU 残差、连续时间轨迹，再回到源码对应与数值验证。包含第 0–13 章和 3 个附录；章节沿用源项目的草稿状态，不意味着所有推导已经独立复核。
 
@@ -57,4 +57,4 @@ description: 从公式到代码，从现场问题到可验证结论。
 - **推断**：给出依据，不把候选解释写成已证实原因。
 - **待验证**：保留问题和下一步实验，不补造结果。
 
-[阅读与验证约定](about/README.md) · [书籍来源与自动同步](sources/index.md)
+[阅读与验证约定](about/README.md) · [书籍来源与自动同步](sources/README.md)

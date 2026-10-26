@@ -13,6 +13,6 @@ tags: [标定, 状态估计]
 3. **逐项推导观测模型和 Jacobian**：第 4–10 章。
 4. **对应源码与复现验证**：第 11–13 章及附录。
 
-[进入《Kalibr Cam-IMU：从公式推导到 Ceres 复现》](kalibr-cam-imu/index.md)
+[进入《Kalibr Cam-IMU：从公式推导到 Ceres 复现》](kalibr-cam-imu/README.md)
 
-书籍正文以原项目为唯一来源。本站构建时导入指定分支的版本，并保留来源提交号；不要在本站修改生成副本。[同步机制](../sources/index.md)
+书籍正文以原项目为唯一来源。本站构建时导入指定分支的版本，并保留来源提交号；不要在本站修改生成副本。[同步机制](../sources/README.md)

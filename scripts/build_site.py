@@ -247,37 +247,18 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     provenance = DOCS / "sources/index.md"
     provenance.parent.mkdir(parents=True, exist_ok=True)
     source_url = meta["base_url"] + "README.md"
-    provenance.write_text(f'''# 书籍来源与自动同步
+    canonical = provenance.read_text(encoding="utf-8")
+    provenance.write_text(canonical + f'''
 
-## 唯一来源
-
-《{spec["title"]}》的正文维护在 [{spec["repository"]}](https://github.com/{spec["repository"]})，不是在本站维护另一份。
+## 当前构建来源
 
 | 项目 | 当前构建 |
 |---|---|
+| 源仓库 | [{meta["repository"]}](https://github.com/{meta["repository"]}) |
 | 跟随分支 | `{meta["ref"]}` |
 | 源提交 | [`{meta["commit"][:12]}`](https://github.com/{meta["repository"]}/commit/{meta["commit"]}) |
 | 书籍目录树 | `{meta["tree"]}` |
 | 源目录 | [{spec["path"]}]({source_url}) |
-
-章节、图片和阅读顺序从源目录导入。正文的 draft 标记原样保留；网站上线不等于推导已经独立审查。
-
-## 什么时候更新
-
-- 本站原生内容推送到 `main` 时构建。
-- 默认每小时检查一次源仓库的 `{meta["ref"]}` 分支；只有书籍目录或网站内容发生变化才重新部署。
-- 仓库 Actions 支持手动运行；也预留 `repository_dispatch` 的 `book-updated` 事件入口。
-- 本地编辑源书不会直接更新网站，必须先把修改推送到源仓库对应分支。
-
-定时任务可能延迟，不承诺推送后立即更新。公开仓库长期无活动时，平台也可能停用定时任务；应检查 Actions 状态。
-
-## 为什么不双向复制
-
-只读取声明的书籍子目录，不执行源仓库代码，不把生成副本提交回源项目或本站分支。书籍修改回源仓库，本站文章修改回本站。一处正文、多个阅读入口。
-
-如果以后需要源仓库 push 后立即同步，可由源工作流发送跨仓库事件；这需要额外授权凭据，目前默认小时级同步不需要它。
-
-[源事件与定时任务说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
 ''', encoding="utf-8")
     config = yaml.safe_load((ROOT / "mkdocs.yml").read_text())
     def replace(value):

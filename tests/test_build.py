@@ -72,6 +72,27 @@ class BuilderTests(unittest.TestCase):
         with patch.object(builder, "download", side_effect=OSError):
             self.assertFalse(builder.is_current("https://example.com", "same"))
 
+    def test_canonical_github_markdown_links(self):
+        for path in (ROOT / "content").rglob("*.md"):
+            for match in builder.LINK.finditer(path.read_text()):
+                target = match[2].split(' "', 1)[0]
+                parsed = builder.urllib.parse.urlsplit(target)
+                if parsed.scheme or target.startswith("#"):
+                    continue
+                resolved = (path.parent / builder.urllib.parse.unquote(parsed.path)).resolve()
+                self.assertTrue(resolved.exists(), f"{path.name}: {target}")
+
+    def test_bytecode_is_not_published(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "source"
+            (source / "__pycache__").mkdir(parents=True)
+            (source / "__pycache__/example.pyc").write_bytes(b"not public content")
+            (source / "README.md").write_text("# Example")
+            builder.copy_tree(source, root / "output")
+            self.assertFalse((root / "output/__pycache__").exists())
+            self.assertTrue((root / "output/index.md").exists())
+
     def test_book_tree_change_changes_fingerprint(self):
         self.assertNotEqual(builder.fingerprint("tree-before"), builder.fingerprint("tree-after"))
 

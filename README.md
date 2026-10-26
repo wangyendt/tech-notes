@@ -40,7 +40,7 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r requirements.lock
 .venv/bin/python -m unittest discover -s tests -v
 .venv/bin/python scripts/build_site.py
-.venv/bin/python -m http.server 8000 --directory site
+.venv/bin/python -m http.server 8000 --bind 127.0.0.1 --directory site
 ```
 
 首次构建会只读拉取源书籍目录并下载已锁定校验值的 MathJax 静态资源，需联网；不执行源项目代码。网站公式脚本和字体随站点托管，不依赖读者浏览器连接外部公式 CDN。
