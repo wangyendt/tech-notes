@@ -13,7 +13,7 @@
 - 文风参考 [Microsoft Style Guide](https://learn.microsoft.com/en-us/style-guide/top-10-tips-style-voice) 和 [Google developer documentation style guide](https://developers.google.com/style/highlights)：具体、直接，标题说明内容，条件放在操作前，不用抽象评价替代实现细节。
 - 区分实测、用户现场反馈、推断、模型测试和待验证事项。一次机型成功不能写成全平台保证。
 - 同一正文只保留一份，交叉主题使用链接；目录归档与章节阅读顺序可以不同。
-- 原生文章增加 title、description、tags、date、updated。源书籍的 draft 状态原样保留，不擅自改写数学结论。
+- 原生文章增加 type: article、title、description、tags、date、updated；本地书籍入口使用 type: book。首页标题列表由构建器自动生成，不手写内容条目或复制摘要。分组沿用顶层主题目录，主题目录必须有 README。源书籍的 draft 状态原样保留，不擅自改写数学结论。
 - 保留原作者与源文件链接；未确认授权时不额外添加许可证或改写来源权利。
 
 ## 匿名案例发布边界

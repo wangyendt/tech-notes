@@ -25,6 +25,11 @@ from pathlib import Path, PurePosixPath
 
 import yaml
 
+try:
+    from scripts.content_index import update_home
+except ModuleNotFoundError:  # Direct execution: Python places scripts/ on sys.path.
+    from content_index import update_home
+
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache"
 GENERATED = CACHE / "generated"
@@ -266,6 +271,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     DOCS.mkdir(parents=True)
     copy_tree(ROOT / "content", DOCS)
     copy_tree(book, DOCS / spec["mount"], meta)
+    update_home(DOCS / "index.md", ROOT / "content", book, spec)
     snapshot = archive_book(book, DOCS / "downloads", meta)
     provenance = DOCS / "sources/index.md"
     provenance.parent.mkdir(parents=True, exist_ok=True)

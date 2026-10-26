@@ -1,4 +1,5 @@
 ---
+type: article
 title: 在 Android 上采集可穿戴设备的心率数据
 description: 保留配套 App 的蓝牙连接，用无障碍控制运动，通过 Shizuku 读取本机蓝牙日志流，保存带时间戳的心率记录。
 tags: [Android, 可穿戴设备, 蓝牙, 数据采集, 状态机]
