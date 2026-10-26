@@ -71,6 +71,7 @@ nav:
   - 系统与工程:
       - systems/index.md
       - Android 运动心率采集: systems/android-wearable-heart-rate/index.md
+      - Watch BLE 与后台运行: systems/watchos-ble-central-background/index.md
   - 关于:
       - 阅读与验证约定: about/index.md
       - 书籍来源与同步: sources/index.md

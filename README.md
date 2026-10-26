@@ -8,6 +8,7 @@
 
 - [标定专题](content/calibration/README.md)：《Kalibr Cam-IMU：从公式推导到 Ceres 复现》，第 0–13 章与 3 个附录。正文唯一来源为 [kalibr-camimu-ceres](https://github.com/wangyendt/kalibr-camimu-ceres/tree/master/docs/books/kalibr_cam_imu_from_equations_to_ceres)。本站构建时导入，不维护手动副本。
 - [系统与工程](content/systems/README.md)：[在 Android 上采集可穿戴设备的心率数据](content/systems/android-wearable-heart-rate/README.md)。应用与设备匿名；不包含个人心率明细或原始诊断包。
+- [Watch BLE 与后台运行](content/systems/watchos-ble-central-background/README.md)：Central / Peripheral 连接、数据格式、Xcode 配置及真机验证方法。
 - [阅读与验证约定](content/about/README.md)。
 
 ## 目录

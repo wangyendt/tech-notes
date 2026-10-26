@@ -253,7 +253,7 @@ def validate_content() -> None:
         text = path.read_text(encoding="utf-8")
         if "/Users/" in text or re.search(r"-----BEGIN (?:RSA |OPENSSH )?PRIVATE KEY", text):
             raise ValueError("local path or private key found in publishable content")
-        if "android-wearable-heart-rate" in path.parts and FORBIDDEN.search(text):
+        if any(name in path.parts for name in ("android-wearable-heart-rate", "watchos-ble-central-background")) and FORBIDDEN.search(text):
             raise ValueError("case-study anonymization check failed")
         for match in LINK.finditer(text):
             target = match[2].split(' "', 1)[0]
@@ -263,10 +263,10 @@ def validate_content() -> None:
             local = (path.parent / urllib.parse.unquote(parsed.path)).resolve()
             if not local.is_relative_to(DOCS.resolve()) or not local.exists():
                 raise ValueError(f"broken or escaping local link in {path.relative_to(DOCS)}: {target}")
-    case = DOCS / "systems/android-wearable-heart-rate"
-    for path in case.rglob("*"):
-        if path.suffix in {".svg", ".py", ".txt"} and FORBIDDEN.search(path.read_text(encoding="utf-8")):
-            raise ValueError("case-study asset anonymization check failed")
+    for slug in ("android-wearable-heart-rate", "watchos-ble-central-background"):
+        for path in (DOCS / "systems" / slug).rglob("*"):
+            if path.suffix in {".svg", ".py", ".txt", ".json"} and FORBIDDEN.search(path.read_text(encoding="utf-8")):
+                raise ValueError("case-study asset anonymization check failed")
 
 
 def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str | None = None, force: bool = False) -> dict:
