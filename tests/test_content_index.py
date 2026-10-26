@@ -25,7 +25,7 @@ class ContentIndexTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             content, book, spec = self.fixture(Path(temp))
             rows = index.entries(content, book, spec)
-            self.assertEqual(rows, [{"title": "Source book", "type": "book", "topic": "systems", "href": "systems/source-book/index.md"}])
+            self.assertEqual(rows, [{"title": "Source book", "type": "book", "topic": "systems", "href": "systems/source-book/index.md", "date": None, "updated": None}])
             self.assertIn("书籍", index.render(content, book, spec))
             self.assertNotIn("Original book body", index.render(content, book, spec))
 
@@ -77,6 +77,44 @@ class ContentIndexTests(unittest.TestCase):
             self.assertIn(r"\[x\] &lt;unsafe&gt;", rendered)
             self.assertIn("systems/a%20file/index.md", rendered)
             self.assertEqual(rendered, index.render(content, book, spec))
+
+    def test_dates_render_and_updated_defaults_to_creation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            content, book, spec = self.fixture(Path(temp))
+            self.article(content, "dated", "---\ntype: article\ndate: 2026-10-01\n---\n# Dated\n")
+            row = next(r for r in index.entries(content, book, spec) if r["type"] == "article")
+            self.assertEqual(row["date"], "2026-10-01")
+            self.assertEqual(row["updated"], "2026-10-01")
+            rendered = index.render(content, book, spec)
+            self.assertIn('<time datetime="2026-10-01">2026-10-01</time>', rendered)
+            self.assertIn("未填写", rendered)  # Undated source fixture is not assigned today's date.
+
+    def test_sort_is_updated_then_created_then_title_and_missing_dates_last(self):
+        with tempfile.TemporaryDirectory() as temp:
+            content, book, spec = self.fixture(Path(temp))
+            for name, created, updated in [("Z newest", "2026-10-01", "2026-10-26"),
+                                            ("B later creation", "2026-10-10", "2026-10-25"),
+                                            ("A earlier creation", "2026-10-01", "2026-10-25"),
+                                            ("C earlier creation", "2026-10-01", "2026-10-25")]:
+                self.article(content, name, f"---\ntype: article\ndate: {created}\nupdated: {updated}\n---\n# {name}\n")
+            names = [r["title"] for r in index.entries(content, book, spec)]
+            self.assertEqual(names, ["Z newest", "B later creation", "A earlier creation", "C earlier creation", "Source book"])
+
+    def test_source_metadata_dates_override_git_fallback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            content, book, spec = self.fixture(Path(temp))
+            fallback = {"date": "2026-06-18", "updated": "2026-07-30"}
+            row = index.entries(content, book, spec, fallback)[0]
+            self.assertEqual(row["date"], "2026-06-18")
+            (book / "README.md").write_text("---\ndate: 2026-01-01\nupdated: 2026-08-01\n---\n# Source book")
+            row = index.entries(content, book, spec, fallback)[0]
+            self.assertEqual((row["date"], row["updated"]), ("2026-01-01", "2026-08-01"))
+
+    def test_invalid_or_reversed_dates_fail(self):
+        for meta in [{"date": "2026-02-30"}, {"date": "yesterday"}, {"date": False},
+                     {"date": "2026-10-26", "updated": "2026-10-25"}]:
+            with self.subTest(meta=meta), self.assertRaises(ValueError):
+                index.dates(meta)
 
     def test_home_marker_must_be_present_exactly_once(self):
         with tempfile.TemporaryDirectory() as temp:

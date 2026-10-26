@@ -166,12 +166,15 @@ def checkout_book(spec: dict, explicit: Path | None, ref: str | None) -> tuple[P
         checkout = explicit.resolve()
         if run("git", "status", "--porcelain", "--", spec["path"], cwd=checkout):
             raise ValueError("the source book has uncommitted changes; commit it before a reproducible build")
+        if run("git", "rev-parse", "--is-shallow-repository", cwd=checkout) == "true":
+            raise ValueError("a complete source history is required for reliable book dates")
     else:
         checkout = CACHE / "upstream-book"
         if not (checkout / ".git").exists():
-            run("git", "clone", "--filter=blob:none", "--sparse", "--no-checkout", "--depth", "1",
+            run("git", "clone", "--filter=blob:none", "--sparse", "--no-checkout",
                 f'https://github.com/{spec["repository"]}.git', str(checkout))
-        run("git", "-c", "core.hooksPath=/dev/null", "fetch", "--depth", "1", "origin", branch, cwd=checkout)
+        history_flags = ["--unshallow"] if run("git", "rev-parse", "--is-shallow-repository", cwd=checkout) == "true" else []
+        run("git", "-c", "core.hooksPath=/dev/null", "fetch", "--filter=blob:none", *history_flags, "origin", branch, cwd=checkout)
         run("git", "sparse-checkout", "set", "--", spec["path"], cwd=checkout)
         run("git", "-c", "core.hooksPath=/dev/null", "checkout", "--detach", "FETCH_HEAD", cwd=checkout)
     commit = run("git", "rev-parse", "HEAD", cwd=checkout)
@@ -179,14 +182,22 @@ def checkout_book(spec: dict, explicit: Path | None, ref: str | None) -> tuple[P
     book = checkout / spec["path"]
     if not (book / "README.md").is_file():
         raise ValueError("source book README missing")
-    meta = {"repository": spec["repository"], "ref": branch, "commit": commit, "tree": tree,
+    history = run("git", "log", "--format=%H %cI", commit, "--", spec["path"], cwd=checkout).splitlines()
+    if not history:
+        raise ValueError("source book history is missing")
+    created_commit, created_time = history[-1].split()
+    updated_commit, updated_time = history[0].split()
+    meta = {"date": created_time[:10], "updated": updated_time[:10],
+            "created_commit": created_commit, "updated_commit": updated_commit,
+            "repository": spec["repository"], "ref": branch, "commit": commit, "tree": tree,
             "path": spec["path"], "mount": spec["mount"],
             "base_url": f'https://github.com/{spec["repository"]}/blob/{commit}/{spec["path"]}/'}
     return book, meta
 
 
-def fingerprint(book_tree: str) -> str:
+def fingerprint(book_tree: str, book_dates: dict | None = None) -> str:
     digest = hashlib.sha256(book_tree.encode())
+    digest.update(json.dumps(book_dates or {}, sort_keys=True).encode())
     paths = [ROOT / "books.json", ROOT / "mkdocs.yml", ROOT / "requirements.lock", ROOT / "vendor.lock.json", ROOT / "anonymization.json"]
     paths += list((ROOT / "content").rglob("*"))
     paths += list((ROOT / "scripts").glob("*.py"))
@@ -262,7 +273,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     CACHE.mkdir(exist_ok=True)
     spec = json.loads((ROOT / "books.json").read_text())
     book, meta = checkout_book(spec, explicit, ref)
-    info = {"fingerprint": fingerprint(meta["tree"]), "book": meta,
+    info = {"fingerprint": fingerprint(meta["tree"], {key: meta[key] for key in ("date", "updated", "created_commit", "updated_commit")}), "book": meta,
             "built_at": datetime.now(timezone.utc).isoformat(), "generator": "Zensical"}
     if check_url and not force and is_current(check_url, info["fingerprint"]):
         return {**info, "changed": False}
@@ -271,7 +282,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     DOCS.mkdir(parents=True)
     copy_tree(ROOT / "content", DOCS)
     copy_tree(book, DOCS / spec["mount"], meta)
-    update_home(DOCS / "index.md", ROOT / "content", book, spec)
+    update_home(DOCS / "index.md", ROOT / "content", book, spec, meta)
     snapshot = archive_book(book, DOCS / "downloads", meta)
     provenance = DOCS / "sources/index.md"
     provenance.parent.mkdir(parents=True, exist_ok=True)
@@ -290,6 +301,8 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
 | 书籍目录树 | `{meta["tree"]}` |
 | 源目录 | [{spec["path"]}]({source_url}) |
 | 原始文件 | {len(snapshot["files"])} 个，包含书籍目录内的全部 Git 跟踪文件 |
+| 创建日期（源目录 Git 首次记录） | [{meta["date"]}](https://github.com/{meta["repository"]}/commit/{meta["created_commit"]}) |
+| 更新日期（源目录最近变更） | [{meta["updated"]}](https://github.com/{meta["repository"]}/commit/{meta["updated_commit"]}) |
 
 ## 下载与核对
 

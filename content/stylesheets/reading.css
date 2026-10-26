@@ -78,12 +78,15 @@
 .md-footer-meta a { color: var(--md-typeset-a-color) !important; }
 /* One title-list layout for both books and articles. */
 .md-content:has(.content-index) { max-width: 49rem; margin-inline: auto; width: 100%; }
-.md-content__inner:has(.content-index) > h1 { font-size: 2rem; margin: .2rem 0 2rem; }
+.md-content__inner:has(.content-index) > h1 { font-size: 2rem; margin: .2rem 0 .7rem; }
+.md-typeset .index-hint { color: var(--desk-muted); font-size: .65rem; margin-bottom: 1.8rem; }
 .md-typeset .content-index h2 { margin: 1.8rem 0 .5rem; font-size: .85rem; color: var(--desk-muted); font-weight: 500; }
 .md-typeset .content-index ul { list-style: none; margin: 0; padding: 0; }
-.md-typeset .content-index li { display: flex; align-items: baseline; gap: 1rem; padding: .8rem 0; margin: 0; margin-inline-start: 0; border-bottom: 1px solid var(--desk-line); }
+.md-typeset .content-index ul > li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .3rem 1rem; padding: .8rem 0; margin: 0; margin-inline-start: 0; border-bottom: 1px solid var(--desk-line); }
 .md-typeset .content-index li > a { flex: 1; min-width: 0; font-size: .95rem; line-height: 1.65; font-weight: 550; }
-.md-typeset .content-kind { flex: none; font-size: .62rem; color: var(--desk-muted); }
+.md-typeset .content-kind { grid-column: 2; grid-row: 1; font-size: .62rem; color: var(--desk-muted); }
+.md-typeset .content-dates { grid-column: 1 / -1; font-size: .61rem; color: var(--desk-muted); }
+.md-typeset .content-dates time { font-family: var(--md-code-font); font-size: .95em; font-variant-numeric: tabular-nums; }
 .md-typeset .home-bottom { margin-top: 2.5rem; padding-top: .7rem; font-size: .68rem; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: 3px; }
 @media (max-width: 76.1875em) { .md-sidebar--primary { border-right: 0; } }
@@ -94,7 +97,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--md-accent-fg-co
   .md-typeset span.arithmatex:not(.math-display) { display: inline-grid; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: baseline; }
   .md-typeset h1 { font-size: 1.55rem; }
   .md-content__inner:has(.content-index) > h1 { font-size: 1.7rem; }
-  .md-typeset .content-index li { gap: .7rem; }
+  .md-typeset .content-index ul > li { gap: .3rem .7rem; }
   .md-typeset .content-index li > a { font-size: .85rem; }
 
 }

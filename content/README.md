@@ -6,6 +6,8 @@ hide: [toc, navigation, footer]
 
 # 工程笔记
 
+<p class="index-hint">各主题内按最近更新排序</p>
+
 <div class="content-index" markdown>
 
 <!-- CONTENT_INDEX -->

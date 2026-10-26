@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import subprocess
@@ -113,6 +114,31 @@ class BuilderTests(unittest.TestCase):
         self.assertIn(r"\[", html)
         self.assertIn(r"\(a_b\)", html)
 
+    def test_book_dates_follow_book_history_not_unrelated_head(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "book").mkdir()
+            def git(*args, day=None):
+                env = dict(os.environ)
+                if day:
+                    env.update(GIT_AUTHOR_DATE=day, GIT_COMMITTER_DATE=day)
+                return subprocess.check_output(["git", *args], cwd=root, env=env, text=True).strip()
+            def commit(message, day):
+                git("add", ".")
+                git("-c", "user.name=Test", "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false", "commit", "-qm", message, day=day)
+                return git("rev-parse", "HEAD")
+            git("init", "-q")
+            (root / "book/README.md").write_text("# Book")
+            first = commit("create book", "2026-06-18T14:00:00+08:00")
+            (root / "book/chapter.md").write_text("# Chapter")
+            last = commit("update book", "2026-07-30T03:00:00+08:00")
+            (root / "README.md").write_text("# Unrelated project change")
+            commit("unrelated", "2026-10-26T12:00:00+08:00")
+            spec = {"ref": "main", "repository": "test/book", "path": "book", "mount": "systems/book"}
+            _, meta = builder.checkout_book(spec, root, None)
+            self.assertEqual((meta["date"], meta["updated"]), ("2026-06-18", "2026-07-30"))
+            self.assertEqual((meta["created_commit"], meta["updated_commit"]), (first, last))
+
     def test_anonymization(self):
         case = ROOT / "content/systems/android-wearable-heart-rate"
         for path in case.rglob("*"):
@@ -149,6 +175,10 @@ class BuilderTests(unittest.TestCase):
 
     def test_book_tree_change_changes_fingerprint(self):
         self.assertNotEqual(builder.fingerprint("tree-before"), builder.fingerprint("tree-after"))
+
+    def test_book_date_change_changes_fingerprint_without_tree_change(self):
+        self.assertNotEqual(builder.fingerprint("same-tree", {"updated": "2026-10-01"}),
+                            builder.fingerprint("same-tree", {"updated": "2026-10-26"}))
 
     def test_quality_example_is_synthetic_and_preserves_gaps(self):
         path = ROOT / "content/systems/android-wearable-heart-rate/examples/quality_check.py"
