@@ -1,0 +1,27 @@
+{
+  "description": "Hash-only deny markers for the anonymous case study; no original brand names stored.",
+  "sha256_by_normalized_length": {
+    "2": [
+      "1d99cc69a8ba22eb7d7175853076fe9dcebfa8b97bb915b7df1f4f976c4ccaa3",
+      "db2d53fb1c9cf5fb1299c0bc6c569f53afbbdc0ac5a77e8ca9e1d1ee47b65aff",
+      "0bcfcd9d0631c0f12f3ecca5eeb7a2ed92df29198cdd25303c05345ca8a7d9fa"
+    ],
+    "7": [
+      "047364b9be67f665eca384b8061d688b8642a8b47b3de35c22a012ed6fe69242",
+      "a655c1481e098699c1e81698c110b5a2acfc4f8fd0aae532264733481abba4f8"
+    ],
+    "4": [
+      "67f2d22514622d1be30c14ee9f3cb104503a159a33a656ca91a1953aa9616429",
+      "69337578b2468a8815434bc98272b81498d69662c0ac3e51496fef7fff66efe2"
+    ],
+    "5": [
+      "ffed4cd95a0592a93bbe41e1f1a58c2a540cd2185013e228f9c9aae9174b3a77"
+    ],
+    "11": [
+      "09324f72a972f5f6823be8542938cd81f40d6df93d9000255d39b174668dd2c9"
+    ],
+    "6": [
+      "8a8ef0736fc2d00472f2f1bd56cec6e4ee047bbb9ab869007701513d6357f638"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+# 在知识库根目录执行：严格构建与测试
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/build_site.py
+# 查看生成站点；仅监听本机
+.venv/bin/python -m http.server 8000 --bind 127.0.0.1 --directory site
+# 手动触发远端强制构建
+ gh workflow run pages.yml --repo wangyendt/tech-notes -f force=true

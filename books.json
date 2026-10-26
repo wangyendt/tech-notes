@@ -1,0 +1,7 @@
+{
+  "repository": "wangyendt/kalibr-camimu-ceres",
+  "ref": "master",
+  "path": "docs/books/kalibr_cam_imu_from_equations_to_ceres",
+  "mount": "calibration/kalibr-cam-imu",
+  "title": "Kalibr Cam-IMU：从公式推导到 Ceres 复现"
+}

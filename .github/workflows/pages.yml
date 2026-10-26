@@ -1,0 +1,88 @@
+name: Build and publish knowledge base
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force a rebuild even when the published inputs are unchanged'
+        type: boolean
+        default: false
+  repository_dispatch:
+    types: [book-updated]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      changed: ${{ steps.build.outputs.changed }}
+      book_commit: ${{ steps.build.outputs.book_commit }}
+    steps:
+      - name: Check out this knowledge base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install locked dependencies
+        run: python -m pip install --require-hashes -r requirements.lock
+      - name: Unit, anonymization and synchronization regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Import the upstream book, validate and build if changed
+        id: build
+        env:
+          FORCE_BUILD: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || inputs.force == true }}
+        run: |
+          flags=()
+          if [ "$FORCE_BUILD" = "true" ]; then flags+=(--force); fi
+          python scripts/build_site.py --check-url https://wangyendt.github.io/tech-notes/ --github-output "$GITHUB_OUTPUT" "${flags[@]}"
+      - name: Configure Pages
+        if: steps.build.outputs.changed == 'true' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Upload the validated static site
+        if: steps.build.outputs.changed == 'true' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+      - name: Record source revision
+        env:
+          BOOK_COMMIT: ${{ steps.build.outputs.book_commit }}
+          CHANGED: ${{ steps.build.outputs.changed }}
+        run: |
+          printf 'Book source: `%s`\n\nSite inputs changed: `%s`\n' "$BOOK_COMMIT" "$CHANGED" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    if: needs.build.outputs.changed == 'true' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

@@ -1,0 +1,82 @@
+site_name: 工程笔记
+site_description: 公式推导、代码实现与现场验证的主题知识库。
+site_url: https://wangyendt.github.io/tech-notes/
+copyright: Copyright © Ye Wang
+use_directory_urls: true
+strict: true
+theme:
+  variant: classic
+  language: zh
+  font: false
+  icon:
+    logo: material/notebook-outline
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 切换深色阅读
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 切换浅色阅读
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+plugins:
+  - search:
+      lang: [zh, en]
+  - tags
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+extra_css:
+  - stylesheets/reading.css
+extra_javascript:
+  - javascripts/mathjax.js
+  - vendor/mathjax/es5/tex-mml-chtml.js
+nav:
+  - 首页: index.md
+  - 标定:
+      - calibration/index.md
+      - Kalibr Cam-IMU: __KALIBR_BOOK__
+  - 系统与工程:
+      - systems/index.md
+      - Android 运动心率采集: systems/android-wearable-heart-rate/index.md
+  - 关于:
+      - 阅读与验证约定: about/index.md
+      - 书籍来源与同步: sources/index.md
+      - 知识库仓库: https://github.com/wangyendt/tech-notes
+validation:
+  nav:
+    omitted_files: info
+  links:
+    not_found: warn
+    absolute_links: warn
+    unrecognized_links: warn

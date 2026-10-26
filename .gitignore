@@ -1,0 +1,13 @@
+.venv/
+.cache/
+site/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+*.key
+*.keystore
+.site-config.yml
+.playwright-cli/
+output/

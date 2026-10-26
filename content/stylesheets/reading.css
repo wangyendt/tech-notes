@@ -1,0 +1,47 @@
+/* Engineering workbook: cool paper, indigo ink, restrained teal evidence markers. */
+:root {
+  --md-text-font: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --md-code-font: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --md-primary-fg-color: #275b8b;
+  --md-primary-fg-color--light: #4076a5;
+  --md-primary-fg-color--dark: #16324a;
+  --md-accent-fg-color: #19756f;
+}
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #f6f9fc;
+  --md-default-fg-color: #16324a;
+  --md-default-fg-color--light: #49647a;
+  --md-typeset-a-color: #275b8b;
+  --md-code-bg-color: #eaf0f6;
+}
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #162331;
+  --md-default-fg-color: #e2ebf2;
+  --md-default-fg-color--light: #b5c9d8;
+  --md-typeset-a-color: #8fc4ec;
+  --md-accent-fg-color: #71c5bd;
+}
+.md-typeset { font-size: .84rem; line-height: 1.95; }
+.md-typeset h1, .md-typeset h2 {
+  font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif;
+  font-weight: 650; letter-spacing: .025em;
+}
+.md-typeset h1 { color: var(--md-default-fg-color); font-size: 2rem; line-height: 1.4; }
+.md-typeset h2 { margin-top: 2em; padding-bottom: .3em; border-bottom: 1px solid #8ba6bb55; }
+.md-typeset .lab-eyebrow { font-family: var(--md-code-font); color: var(--md-accent-fg-color); font-size: .65rem; letter-spacing: .12em; }
+.md-typeset .reading-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin: 1.2rem 0 1.6rem; }
+.md-typeset .reading-map > div { border-top: 3px solid var(--md-primary-fg-color); padding: .8rem; background: var(--md-code-bg-color); }
+.md-typeset .reading-map small { display: block; color: var(--md-default-fg-color--light); margin-top: .4rem; }
+.md-typeset .reading-map strong { font-size: 1rem; }
+.md-typeset .arithmatex { max-width: 100%; }
+.md-typeset div.arithmatex { overflow-x: auto; overflow-y: hidden; padding: .2em 0; }
+.md-typeset table:not([class]) { font-size: .72rem; }
+.md-typeset pre { line-height: 1.55; }
+.md-typeset img { display: block; margin: 1rem auto; }
+.md-typeset a:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .md-typeset { font-size: .8rem; }
+  .md-typeset h1 { font-size: 1.6rem; }
+  .md-typeset .reading-map { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
