@@ -30,3 +30,10 @@ Kalibr 书籍由源仓库导入。源文档标记为 draft 的章节在本站仍
 本站原生文章在本仓库维护。外部书籍回源项目修改，再通过自动构建更新本站。
 
 [查看当前书籍来源与同步机制](../sources/README.md)
+
+
+## 写作与排版
+
+文章先交代问题和实现，再展开具体步骤、故障与测试结果。写法参考 [Microsoft Style Guide](https://learn.microsoft.com/en-us/style-guide/top-10-tips-style-voice) 和 [Google developer documentation style guide](https://developers.google.com/style/highlights)：标题说明内容，操作写清前提，减少重复的预告和总结。
+
+外部书籍不按本站文风改写，保留源项目正文。

@@ -7,7 +7,7 @@
 ## 内容
 
 - [标定专题](content/calibration/README.md)：《Kalibr Cam-IMU：从公式推导到 Ceres 复现》，第 0–13 章与 3 个附录。正文唯一来源为 [kalibr-camimu-ceres](https://github.com/wangyendt/kalibr-camimu-ceres/tree/master/docs/books/kalibr_cam_imu_from_equations_to_ceres)。本站构建时导入，不维护手动副本。
-- [系统与工程](content/systems/README.md)：[免 root 采集可穿戴设备心率：一次 Android 工程闭环](content/systems/android-wearable-heart-rate/README.md)。应用与设备匿名；不包含个人心率明细或原始诊断包。
+- [系统与工程](content/systems/README.md)：[在 Android 上采集可穿戴设备的心率数据](content/systems/android-wearable-heart-rate/README.md)。应用与设备匿名；不包含个人心率明细或原始诊断包。
 - [阅读与验证约定](content/about/README.md)。
 
 ## 目录
@@ -27,7 +27,7 @@ AGENTS.md                  # AI 与人工共同遵守的整理规范
 
 ## 网站引擎
 
-采用 Zensical，保留兼容的 `mkdocs.yml` 配置与 Markdown 内容结构。Material for MkDocs 官方已公告于 2027-05-05 结束维护，因此新站点直接采用其维护中的后继项目。公式静态资源随站点托管。
+采用 Zensical，保留兼容的 `mkdocs.yml` 配置与 Markdown 内容结构。Material for MkDocs 官方已公告于 2027-05-05 结束维护，因此新站点直接采用其维护中的后继项目。公式静态资源随站点托管。页面使用无衬线字体、浅色导航和可切换的深色阅读模式。
 
 [迁移与兼容说明](https://zensical.org/docs/compatibility/mkdocs/migration/)
 
@@ -50,6 +50,8 @@ python3.12 -m venv .venv
 ```bash
 .venv/bin/python scripts/build_site.py --book-checkout PATH_TO_KALIBR_REPOSITORY
 ```
+
+书籍导入不改写正文与公式，只适配网页入口和相对链接；每次构建提供完整原始 ZIP 和 SHA-256 文件清单，包含书籍目录内全部 Git 跟踪文件。来源提示由 `overrides/main.html` 放在章节正文之后。
 
 原生文章在 `content/` 中修改。书籍修改回源项目，提交并推送至 `books.json` 指定分支。`.cache/`、`site/` 和虚拟环境均不提交。
 

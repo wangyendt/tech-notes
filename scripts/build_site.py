@@ -19,6 +19,7 @@ import tarfile
 import urllib.parse
 import urllib.request
 import unicodedata
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
@@ -106,9 +107,6 @@ def copy_tree(source: Path, destination: Path, book_meta: dict | None = None) ->
         if not path.is_file() or path.name == ".DS_Store" or "__pycache__" in path.parts:
             continue
         rel = path.relative_to(source)
-        # Image-generation working notes are not part of the published book.
-        if book_meta and rel.parts[0] == "assets" and path.suffix == ".md":
-            continue
         if path.suffix.lower() not in {".md", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".css", ".js", ".py", ".txt", ".bib"}:
             raise ValueError(f"unreviewed publication file type: {path.name}")
         target = destination / rel
@@ -117,21 +115,44 @@ def copy_tree(source: Path, destination: Path, book_meta: dict | None = None) ->
         target.parent.mkdir(parents=True, exist_ok=True)
         if path.suffix == ".md":
             text = rewrite_links(path.read_text(encoding="utf-8"))
-            if book_meta:
-                url = book_meta["base_url"] + urllib.parse.quote(str(rel), safe="/")
-                note = ('\n!!! info "源项目同步章节"\n'
-                        f'    正文来自[源文件]({url})，提交 `{book_meta["commit"][:12]}`。'
-                        '章节状态与原文一致；本站展示不代表新的推导审查。\n')
-                lines = text.splitlines(keepends=True)
-                first_h1 = next((i for i, line in enumerate(lines) if line.startswith("# ")), None)
-                if first_h1 is None:
-                    text = note + "\n" + text
-                else:
-                    lines.insert(first_h1 + 1, "\n" + note + "\n")
-                    text = "".join(lines)
             target.write_text(text, encoding="utf-8")
         else:
             shutil.copyfile(path, target)
+
+
+def archive_book(source: Path, destination: Path, meta: dict) -> dict:
+    """Publish every tracked book file byte-for-byte, independent of web links."""
+    destination.mkdir(parents=True, exist_ok=True)
+    archive = destination / "kalibr-cam-imu-original.zip"
+    manifest = destination / "kalibr-cam-imu-sha256.json"
+    files = {}
+    checkout = source
+    # Source files must belong to this commit, not a local ignored working file.
+    while not (checkout / ".git").exists():
+        if checkout.parent == checkout:
+            raise ValueError("book archive requires a Git checkout")
+        checkout = checkout.parent
+    tracked = run("git", "ls-tree", "-rz", "--name-only", f'{meta["commit"]}:{meta["path"]}', cwd=checkout).split("\0")
+    tracked = [name for name in tracked if name]
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        for name in tracked:
+            rel = PurePosixPath(name)
+            if rel.is_absolute() or ".." in rel.parts:
+                raise ValueError("unsafe source archive path")
+            path = source / name
+            if path.is_symlink() or not path.is_file():
+                raise ValueError("source archive contains a missing or unsafe file")
+            raw = path.read_bytes()
+            entry = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o644 << 16
+            bundle.writestr(entry, raw)
+            files[name] = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+    result = {"repository": meta["repository"], "commit": meta["commit"], "path": meta["path"],
+              "archive": archive.name, "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+              "files": files}
+    manifest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return result
 
 
 def checkout_book(spec: dict, explicit: Path | None, ref: str | None) -> tuple[Path, dict]:
@@ -164,6 +185,7 @@ def fingerprint(book_tree: str) -> str:
     paths = [ROOT / "books.json", ROOT / "mkdocs.yml", ROOT / "requirements.lock", ROOT / "vendor.lock.json", ROOT / "anonymization.json"]
     paths += list((ROOT / "content").rglob("*"))
     paths += list((ROOT / "scripts").glob("*.py"))
+    paths += list((ROOT / "overrides").rglob("*"))
     for path in sorted(paths):
         if path.is_file() and not path.is_symlink() and "__pycache__" not in path.parts and path.name != ".DS_Store":
             digest.update(str(path.relative_to(ROOT)).encode())
@@ -244,6 +266,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
     DOCS.mkdir(parents=True)
     copy_tree(ROOT / "content", DOCS)
     copy_tree(book, DOCS / spec["mount"], meta)
+    snapshot = archive_book(book, DOCS / "downloads", meta)
     provenance = DOCS / "sources/index.md"
     provenance.parent.mkdir(parents=True, exist_ok=True)
     source_url = meta["base_url"] + "README.md"
@@ -259,6 +282,15 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
 | 源提交 | [`{meta["commit"][:12]}`](https://github.com/{meta["repository"]}/commit/{meta["commit"]}) |
 | 书籍目录树 | `{meta["tree"]}` |
 | 源目录 | [{spec["path"]}]({source_url}) |
+| 原始文件 | {len(snapshot["files"])} 个，包含书籍目录内的全部 Git 跟踪文件 |
+
+## 下载与核对
+
+- [完整原始文件 ZIP](../downloads/kalibr-cam-imu-original.zip)：文件名、目录和每个文件的字节内容均保留，不替换 Markdown 链接。
+- [SHA-256 校验清单](../downloads/kalibr-cam-imu-sha256.json)：列出每个文件的大小与哈希，以及整个 ZIP 的哈希。
+- [配图生成说明](../{spec["mount"]}/assets/figure_generation_prompts.md)：源书目录中一并保留的素材说明。
+
+网页只将 `README.md` 映射为入口，并适配对应的相对链接；不改写章节正文、公式或配图。来源提示位于正文之后，不插入原文。
 ''', encoding="utf-8")
     config = yaml.safe_load((ROOT / "mkdocs.yml").read_text())
     def replace(value):
@@ -270,6 +302,7 @@ def prepare(explicit: Path | None = None, ref: str | None = None, check_url: str
             return {k: replace(v) for k, v in value.items()}
         return value
     config = replace(config)
+    config.setdefault("extra", {})["book"] = meta
     config["docs_dir"] = str(DOCS.relative_to(ROOT))
     config["site_dir"] = "site"
     CONFIG.write_text(yaml.safe_dump(config, allow_unicode=True, sort_keys=False), encoding="utf-8")

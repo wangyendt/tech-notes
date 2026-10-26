@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  {{ super() }}
+  {% set book = config.extra.book %}
+  {% if book and book.mount in page.url %}
+  <aside class="source-caption" aria-label="本章来源">
+    <span>源项目同步 · <code>{{ book.commit[:12] }}</code> · 原稿状态不变</span>
+    <a href="{{ 'sources/' | url }}">来源与完整原始文件 →</a>
+  </aside>
+  {% endif %}
+{% endblock %}

@@ -1,60 +1,48 @@
 ---
 title: 工程笔记
-description: 从公式到代码，从现场问题到可验证结论。
+description: Ye Wang 的技术笔记，记录相机与 IMU 标定、Android 和传感器数据采集。
+hide: [toc, navigation]
 ---
 
-<p class="lab-eyebrow">TECH NOTES / THEORY · IMPLEMENTATION · EVIDENCE</p>
+# 工程笔记
 
-# 把公式、代码与现场证据放在一起
+记录相机与 IMU 标定、Android 开发和传感器数据采集。这里有按章节阅读的书，也有围绕具体问题写的工程笔记。
 
-这是一个按主题组织的技术知识库。长篇推导按书阅读，工程实践按问题阅读；正文只维护一份，目录、标签和阅读路线提供不同入口。
+<section class="book-entry" markdown>
+<p class="entry-label">标定 · 14 章 / 3 个附录</p>
 
-<div class="reading-map" markdown>
-<div markdown>
-**公式**
+## Kalibr Cam-IMU
 
-模型为什么这样建立？
+<p class="entry-subtitle">从公式推导到 Ceres 复现</p>
 
-<small>坐标系、残差方向与 Jacobian 推导。</small>
-</div>
-<div markdown>
-**代码**
+从坐标系和刚体变换开始，推导相机、陀螺仪、加速度计的残差与 Jacobian，再对照 Kalibr 源码和 Ceres 实现。
 
-理论怎样落到实现？
+<div class="chapter-groups" markdown>
 
-<small>数据链路、状态机和可复用的最小示例。</small>
-</div>
-<div markdown>
-**证据**
+- **第 0–3 章**<br>符号、坐标系与最小二乘
+- **第 4–10 章**<br>观测模型、连续时间轨迹与 Jacobian
+- **第 11–13 章**<br>源码对应、初始化与多传感器
+- **附录 A–C**<br>李群公式、数值验证与速查表
 
-结果究竟证明了什么？
-
-<small>真实实验、失败信号与明确的适用边界。</small>
-</div>
 </div>
 
-## 从这里开始
+[阅读全文与章节目录 →](calibration/kalibr-cam-imu/README.md){ .entry-link }
 
-### 标定：按一本书建立完整理解
+<p class="entry-note">正文和配图从源项目同步，保留原稿的 draft 状态。<a href="sources/">查看来源与原始文件</a></p>
+</section>
 
-[**Kalibr Cam-IMU：从公式推导到 Ceres 复现**](calibration/kalibr-cam-imu/README.md)
+<section class="article-entry" markdown>
+<p class="entry-label">系统与工程 · Android · 2026-10-26</p>
 
-从问题、符号和坐标系出发，进入最小二乘、相机与 IMU 残差、连续时间轨迹，再回到源码对应与数值验证。包含第 0–13 章和 3 个附录；章节沿用源项目的草稿状态，不意味着所有推导已经独立复核。
+## 在 Android 上采集可穿戴设备的心率数据
 
-→ [标定专题导航](calibration/README.md)
+保留某 App 的蓝牙连接，用无障碍控制运动开始和结束，通过本机蓝牙日志流接收心率。记录 Shizuku 的使用、控件树故障的定位，以及拔线、锁屏测试中的数据间隔。
 
-### 系统与工程：从一个真实约束走到闭环
+[阅读工程笔记 →](systems/android-wearable-heart-rate/README.md){ .entry-link }
+</section>
 
-[**免 root 采集可穿戴设备心率：一次 Android 工程闭环**](systems/android-wearable-heart-rate/README.md)
+<div class="home-bottom" markdown>
 
-保留某 App 的蓝牙连接，用独立 APK 控制运动、订阅本机日志流并保存记录。重点是权限边界、分层重组、控件可靠性、错误恢复与数据质量，而不是把一次跑通写成通用保证。
+[标定](calibration/README.md) · [系统与工程](systems/README.md) · [关于本站](about/README.md) · [GitHub](https://github.com/wangyendt/tech-notes)
 
-→ [系统与工程专题导航](systems/README.md)
-
-## 如何阅读这里的结论
-
-- **实测**：明确测试对象、条件与结果，结论不越过设备和版本范围。
-- **推断**：给出依据，不把候选解释写成已证实原因。
-- **待验证**：保留问题和下一步实验，不补造结果。
-
-[阅读与验证约定](about/README.md) · [书籍来源与自动同步](sources/README.md)
+</div>

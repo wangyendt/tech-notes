@@ -1,11 +1,12 @@
 site_name: 工程笔记
-site_description: 公式推导、代码实现与现场验证的主题知识库。
+site_description: 相机与 IMU 标定、Android 和传感器数据采集。
 site_url: https://wangyendt.github.io/tech-notes/
 copyright: Copyright © Ye Wang
 use_directory_urls: true
 strict: true
 theme:
-  variant: classic
+  variant: modern
+  custom_dir: overrides
   language: zh
   font: false
   icon:

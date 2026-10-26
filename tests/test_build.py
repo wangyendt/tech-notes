@@ -2,6 +2,9 @@ import importlib.util
 import json
 import sys
 import tempfile
+import subprocess
+import zipfile
+import hashlib
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -57,7 +60,36 @@ class BuilderTests(unittest.TestCase):
             builder.copy_tree(source, root / "output", meta)
             self.assertEqual((source / "README.md").read_text(), original)
             self.assertIn("index.md", (root / "output/index.md").read_text())
-            self.assertIn("源项目同步章节", (root / "output/index.md").read_text())
+            self.assertEqual((root / "output/index.md").read_text(), builder.rewrite_links(original))
+            self.assertNotIn("源项目同步章节", (root / "output/index.md").read_text())
+
+    def test_full_original_archive_is_byte_exact_and_reproducible(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "book"
+            (source / "assets").mkdir(parents=True)
+            originals = {"README.md": b"# Book\r\n[home](README.md)\r\n",
+                         "assets/notes.md": b"# Original image notes\n",
+                         "章节.md": "# 原始章节\n".encode(),
+                         "assets/image.png": bytes(range(256))}
+            for name, raw in originals.items():
+                (source / name).write_bytes(raw)
+            def git(*args):
+                return subprocess.check_output(["git", *args], cwd=root, text=True).strip()
+            git("init", "-q")
+            git("add", "book")
+            git("-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "fixture")
+            meta = {"repository": "test/book", "commit": git("rev-parse", "HEAD"), "path": "book"}
+            first = builder.archive_book(source, root / "out1", meta)
+            second = builder.archive_book(source, root / "out2", meta)
+            self.assertEqual(first, second)
+            with zipfile.ZipFile(root / "out1" / first["archive"]) as bundle:
+                self.assertEqual(set(bundle.namelist()), set(originals))
+                for name, raw in originals.items():
+                    self.assertEqual(bundle.read(name), raw)
+                    self.assertEqual(first["files"][name]["sha256"], hashlib.sha256(raw).hexdigest())
+            builder.copy_tree(source, root / "web", meta)
+            self.assertTrue((root / "web/assets/notes.md").exists())
 
     def test_anonymization(self):
         case = ROOT / "content/systems/android-wearable-heart-rate"

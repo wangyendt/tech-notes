@@ -9,7 +9,8 @@
 
 ## 写作与证据
 
-- 问题 → 约束 → 尝试 → 证据 → 结论 → 边界；不要按聊天或 APK 版本写流水账。
+- 先说明解决的问题、采用的实现和适用条件，再按需要展开；不要按聊天或 APK 版本写流水账。不要强套固定章节模板、使用口号式标题或在文末重复整篇结论。
+- 文风参考 [Microsoft Style Guide](https://learn.microsoft.com/en-us/style-guide/top-10-tips-style-voice) 和 [Google developer documentation style guide](https://developers.google.com/style/highlights)：具体、直接，标题说明内容，条件放在操作前，不用抽象评价替代实现细节。
 - 区分实测、用户现场反馈、推断、模型测试和待验证事项。一次机型成功不能写成全平台保证。
 - 同一正文只保留一份，交叉主题使用链接；目录归档与章节阅读顺序可以不同。
 - 原生文章增加 title、description、tags、date、updated。源书籍的 draft 状态原样保留，不擅自改写数学结论。
@@ -29,5 +30,6 @@
 - `python scripts/build_site.py` 会只读拉取源书、检查匿名化与相对链接，再执行严格构建。
 - 需要本地源预览时用 `--book-checkout PATH`；源书须干净，生成物不可提交。
 - 校验来源提交号、章节顺序、公式、搜索、图片、移动端和前后翻页。修改导航时同步专题入口。
+- 书籍网页只做 README 入口及链接适配，不向正文插入提示；来源提示由模板在正文之后呈现。每次发布完整原始 ZIP 和逐文件 SHA-256 清单，包含源书籍全部 Git 跟踪文件。
 - 构建产物与 book snapshot 不提交。仅 GitHub Pages 工作流发布；不要通过隐藏脚本上传原始数据。
 - 自动同步跟随远端分支，而非监视本地工作目录；定时任务不是即时回调。不要把未配置的跨仓库凭据写成已完成。
