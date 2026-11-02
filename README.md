@@ -92,6 +92,32 @@ updated: 2026-10-26
 
 若导入、校验或严格构建失败，不执行新部署，保留此前已上线版本。源项目目前为公开仓库，默认同步无需额外令牌。
 
+## 配置评论、点赞与浏览量
+
+互动区由网站模板统一添加到原生文章、本地书籍入口和导入书籍的阅读页；首页、专题目录、关于页和书籍素材说明不显示。源书正文不变。浏览量位于标题下，评论和 👍 反应及其数量位于正文与来源提示之后。单页可在 front matter 设置 `comments: false` 关闭整个互动区。
+
+不蒜子由 `mkdocs.yml` 的 `extra.engagement.pageviews` 控制。本站已配置 Giscus 的 Announcements 分类，两个服务均启用。迁移仓库或重新配置时按以下步骤操作：
+
+1. 在 [仓库设置](https://github.com/wangyendt/tech-notes/settings) 的 Features 中开启 Discussions。
+2. [安装 Giscus GitHub App](https://github.com/apps/giscus)，仅授权 `wangyendt/tech-notes`。
+3. 在 Discussions 中选择或创建 Announcements（公告类型）分类；访问 [Giscus 配置页](https://giscus.app/zh-CN)，输入 `wangyendt/tech-notes` 并选择该分类。
+4. 将生成配置中的 `data-repo-id`、`data-category`、`data-category-id` 填入 `mkdocs.yml` 的 `extra.engagement.giscus` 对应字段，再设置 `enabled: true`。这些是公开 ID，不是密钥；不要填写 GitHub Token。仓库与分类 ID 已经核对；更换分类时应重新获取 ID。
+5. 运行单元测试、前端回归测试和严格构建，然后将修改提交、推送到 `main`，由现有 GitHub Pages 工作流发布：
+
+   ```bash
+   .venv/bin/python -m unittest discover -s tests -v
+   node --test tests/engagement.test.cjs
+   .venv/bin/python scripts/build_site.py
+   ```
+
+只需要从配置页复制仓库与分类字段，不要把整段脚本重复粘贴进正文。本站固定使用 canonical URL 的 pathname 作为 `specific` 映射字符串，开启严格匹配、中文界面、主帖反应和深浅主题同步。例如 `/tech-notes/systems/watchos-ble-central-background/`；修改文章标题不影响对应讨论，但变更路径需要迁移讨论标题及严格匹配哈希。首次有人评论或回应时，Giscus 才会创建对应讨论。
+
+`giscus.json` 将嵌入来源限制为 `https://wangyendt.github.io`；这是域名级限制，不隔离该域名下的其他项目路径。若将来更换域名，需要一起更新 `site_url` 和该白名单。本地及其他域名预览不加载这两个服务，避免测试浏览计数或产生测试讨论。带查询参数或非 canonical 路径的页面不加载不蒜子，避免泄漏授权参数或拆分计数。当前使用完整页面导航；若将来启用 instant navigation，应先补充组件卸载、重新初始化和跨页计数测试。
+
+发布后检查两篇文章和两个书籍章节的浏览量分别加载、评论不串页、深浅主题切换及手机宽度。登录后由维护者手动验证一次评论和 👍 反应，再删除测试评论、取消反应。刷新会产生新的页面访问，数字不是独立人数，也不能补算历史阅读。服务受阻或超时时显示不可用提示，不阻塞正文；无法保证防刷或第三方服务可用性。
+
+停用时将 `pageviews` 和 `giscus.enabled` 改为 `false` 后重新发布，不会删除 GitHub 中的历史讨论。[读者可见的数据说明](content/about/README.md#interaction-privacy)。
+
 ## 内容权利与隐私
 
 原生正文与导入书籍保留各自作者及来源，不因汇编在此而改变原有权利。源书籍仍按原文 draft 状态呈现。第三方前端资源保留自身许可证；本站未为所有内容统一另授开源许可证。

@@ -101,4 +101,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--md-accent-fg-co
   .md-typeset .content-index li > a { font-size: .85rem; }
 
 }
+.md-typeset .pageviews { color: var(--desk-muted); font-size: .65rem; margin: -.6rem 0 1.4rem; }
+.md-typeset .engagement { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--desk-line); }
+.md-typeset .engagement h2 { margin-top: .5rem; font-size: 1.1rem; }
+.md-typeset .engagement-note, .md-typeset .engagement-status { color: var(--desk-muted); font-size: .68rem; line-height: 1.8; }
+.engagement .giscus { width: 100%; min-width: 0; }
+.engagement [hidden], .pageviews [hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }

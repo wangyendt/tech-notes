@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block extrahead %}
+  {{ super() }}
+  {% if page and page.canonical_url %}
+  <meta name="giscus:backlink" content="{{ page.canonical_url | e }}">
+  {% endif %}
+{% endblock %}
 {% block content %}
   {{ super() }}
   {% set book = config.extra.book %}
@@ -7,5 +13,11 @@
     <span>源项目同步 · <code>{{ book.commit[:12] }}</code> · 原稿状态不变</span>
     <a href="{{ 'sources/' | url }}">来源与完整原始文件 →</a>
   </aside>
+  {% endif %}
+  {% set engagement = config.extra.engagement %}
+  {% set book_prefix = (book.mount ~ '/') if book else '' %}
+  {% set book_page = book and page.url[:book_prefix | length] == book_prefix and '/assets/' not in page.url %}
+  {% if engagement and (page.meta.type in ['article', 'book'] or book_page) and page.meta.comments != false %}
+  {% include "partials/engagement.html" %}
   {% endif %}
 {% endblock %}

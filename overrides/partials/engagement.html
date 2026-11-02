@@ -1,0 +1,20 @@
+{% set giscus = engagement.giscus %}
+<section class="engagement" aria-labelledby="engagement-title"
+         data-canonical="{{ page.canonical_url | e }}"
+         data-pageviews="{{ 'true' if engagement.pageviews else 'false' }}"
+         data-giscus-enabled="{{ 'true' if giscus.enabled else 'false' }}"
+         data-repo="{{ giscus.repo | e }}" data-repo-id="{{ giscus.repo_id | e }}"
+         data-category="{{ giscus.category | e }}" data-category-id="{{ giscus.category_id | e }}">
+  {% if engagement.pageviews %}
+  <p class="pageviews" aria-live="polite">
+    <span id="busuanzi_container_page_pv" style="display: none">浏览量 <span id="busuanzi_value_page_pv"></span> 次</span>
+    <span data-pageviews-status>浏览量：等待加载</span>
+  </p>
+  {% endif %}
+  <h2 id="engagement-title">评论与点赞</h2>
+  <p class="engagement-note">登录 GitHub 后可发表评论或点击 👍 点赞，数量显示在对应反应旁。请勿发布账号、密钥、设备标识或个人健康数据。</p>
+  <p class="engagement-note">浏览量是页面访问次数，不代表独立读者或读完人数。互动功能使用第三方服务，<a href="{{ 'about/' | url }}#interaction-privacy">查看数据说明</a>。</p>
+  <p class="engagement-status" data-giscus-status role="status">{{ '评论区等待加载。' if giscus.enabled and giscus.repo_id and giscus.category_id else '评论与点赞尚未启用。' }}</p>
+  <div class="giscus"></div>
+  <noscript><p>浏览量、评论与点赞需要启用 JavaScript；正文阅读不受影响。</p></noscript>
+</section>

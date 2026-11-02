@@ -63,6 +63,17 @@ extra_css:
 extra_javascript:
   - javascripts/mathjax.js
   - vendor/mathjax/es5/tex-mml-chtml.js
+  - javascripts/engagement.js
+extra:
+  engagement:
+    pageviews: true
+    giscus:
+      # Public identifiers; no GitHub token belongs in client-side configuration.
+      enabled: true
+      repo: wangyendt/tech-notes
+      repo_id: R_kgDOVX4jBQ
+      category: Announcements
+      category_id: DIC_kwDOVX4jBc4DKL7E
 nav:
   - 首页: index.md
   - 标定:

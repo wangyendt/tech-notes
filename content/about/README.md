@@ -37,3 +37,13 @@ Kalibr 书籍由源仓库导入。源文档标记为 draft 的章节在本站仍
 文章先交代问题和实现，再展开具体步骤、故障与测试结果。写法参考 [Microsoft Style Guide](https://learn.microsoft.com/en-us/style-guide/top-10-tips-style-voice) 和 [Google developer documentation style guide](https://developers.google.com/style/highlights)：标题说明内容，操作写清前提，减少重复的预告和总结。
 
 外部书籍不按本站文风改写，保留源项目正文。
+
+## 评论、点赞与浏览量 {#interaction-privacy}
+
+文章和书籍阅读页使用 Giscus 提供评论及表情反应，数据存放在本站 GitHub 仓库的公开 Discussions 中。启用后，评论或点赞需要登录 GitHub 并授权 Giscus；评论内容、GitHub 用户名和反应可能公开可见。不要在评论中粘贴账号、密钥、设备标识、个人健康数据或原始诊断日志。维护者可在 GitHub 上管理讨论。
+
+浏览量由不蒜子统计，代表页面访问次数，不代表独立读者、阅读完成或内容准确性。启用统计时，浏览器会向不蒜子发送请求，服务可接收到页面地址、IP 地址等网络信息。Giscus 也会接收加载评论所需的页面信息和网络请求；登录会涉及其授权与会话机制。正文、公式和配图不依赖这两个服务。
+
+本站的本地预览不连接互动服务；带查询参数的地址不加载不蒜子，避免将参数中的信息发送给计数服务。第三方服务不可用或被浏览器拦截时，显示不可用提示，不用零代替未知计数。新接入的统计不能补回接入前未记录的访问。
+
+[Giscus 项目与说明](https://github.com/giscus/giscus) · [不蒜子服务说明](https://busuanzi.ibruce.info/)
