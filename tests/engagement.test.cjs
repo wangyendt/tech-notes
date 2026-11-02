@@ -122,3 +122,12 @@ test('giscus load errors and timeouts are visible and do not remove article cont
   f.container.children[0].onerror();
   assert.match(f.comments.textContent, /暂不可用/);
 });
+
+test('a missing discussion is the normal empty state, including after a timeout', () => {
+  const f = fixture({ pageviews: false });
+  [...f.timers.values()][0]();
+  assert.equal(f.comments.hidden, false);
+  f.events.message({ origin: 'https://giscus.app', source: f.frame.contentWindow,
+    data: { giscus: { error: 'Discussion not found' } } });
+  assert.equal(f.comments.hidden, true);
+});

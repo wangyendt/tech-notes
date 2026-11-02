@@ -68,7 +68,11 @@
     const data = event.data && event.data.giscus;
     if (!data || typeof data !== "object") return;
     clearTimeout(timer);
-    if (data.error) failed();
+    // Giscus creates a discussion on the first comment/reaction, not on read.
+    // Its "not found" event is the normal empty state for a new page.
+    if (typeof data.error === "string" && data.error.includes("Discussion not found")) {
+      commentsStatus.hidden = true;
+    } else if (data.error) failed();
     else if (data.resizeHeight || "discussion" in data) commentsStatus.hidden = true;
   });
   const script = document.createElement("script");
