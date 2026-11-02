@@ -4,7 +4,7 @@ tags: [工程实践]
 ---
 # 系统与工程
 
-Android、设备通信和数据采集的实现笔记。
+Android、Apple 平台开发、设备通信和数据采集的实现笔记。
 
 ## Android
 
@@ -14,6 +14,10 @@ Android、设备通信和数据采集的实现笔记。
 
 
 ## watchOS 与 BLE
+
+[iPhone 与 Apple Watch 不显示开发者模式时，如何开启](iphone-apple-watch-developer-mode/README.md)
+
+从 Device Hub 发起开发配对，让隐藏入口出现，再分别完成手机和手表的重启确认。包含旧配对缓存的识别和状态检查。
 
 [Apple Watch：BLE Central 与后台运行配置](watchos-ble-central-background/README.md)
 
