@@ -81,6 +81,9 @@ nav:
       - Kalibr Cam-IMU: __KALIBR_BOOK__
   - 系统与工程:
       - systems/index.md
+      - Android 无障碍服务: systems/android-accessibility-service/index.md
+      - Shizuku 原理与权限边界: systems/android-shizuku/index.md
+      - Android HCI 日志与 btsnoop TCP: systems/android-bluetooth-hci-btsnoop/index.md
       - Android 运动心率采集: systems/android-wearable-heart-rate/index.md
       - iPhone 与 Apple Watch 开发者模式: systems/iphone-apple-watch-developer-mode/index.md
       - Watch BLE 与后台运行: systems/watchos-ble-central-background/index.md

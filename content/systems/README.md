@@ -8,9 +8,17 @@ Android、Apple 平台开发、设备通信和数据采集的实现笔记。
 
 ## Android
 
+### 概念与适用条件
+
+- [Android 无障碍服务：控件树、手势与操作结果确认](android-accessibility-service/README.md)：界面观察、输入能力及业务结果确认，不把点击成功当作任务完成。
+- [Shizuku 的工作原理与权限边界](android-shizuku/README.md)：应用与辅助进程的身份、启动授权和生命周期，不把 shell 等同于 root。
+- [Android 蓝牙 HCI 日志：文件采集与 btsnoop TCP 流](android-bluetooth-hci-btsnoop/README.md)：HCI 与 logcat 的区别、8872 出口的构建和权限条件，以及文件、诊断包和实时流的取舍。
+
+### 工程案例
+
 [在 Android 上采集可穿戴设备的心率数据](android-wearable-heart-rate/README.md)
 
-保留某 App 的蓝牙连接，控制运动开始和结束，从本机蓝牙日志流保存心率。包括权限配置、控件树故障定位和数据质量统计。案例已匿名处理。
+组合使用上述能力，保留配套 App 的蓝牙连接，控制某 App 的运动界面，从测试手机的 HCI 日志流解析心率。保留窗口故障、通道恢复、短时锁屏证据及数据质量统计；不将本机成功扩展为通用适配保证。案例已匿名处理。
 
 
 ## watchOS 与 BLE
